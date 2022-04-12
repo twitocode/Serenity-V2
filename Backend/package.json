@@ -1,0 +1,5 @@
+{
+	"scripts": {
+		"update": "dotnet ef database update --context \"DataContext\" --project \"Infrastructure\" --startup-project \"Web\""
+	}
+}
