@@ -15,8 +15,8 @@
 			"server": "localhost",
 			"port": 5432,
 			"driver": "PostgreSQL",
-			"name": "Notes",
-			"database": "notes",
+			"name": "Serenity",
+			"database": "serenity",
 			"username": "postgres",
 			"password": "pg_notTWILIGHT_341"
 		}

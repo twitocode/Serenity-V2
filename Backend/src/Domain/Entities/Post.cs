@@ -7,12 +7,19 @@ namespace Domain.Entities
         [Key]
         public Guid Id;
         public string CreatedAt { get; set; }
+
+        [Required]
         public string Title { get; set; }
+
+        [Required]
         public string Content { get; set; }
 
+        [Required]
         public string UserId { get; set; }
+
+        [Required]
         public User User { get; set; }
 
-        public ICollection<Comment> Comments { get; set; }
+        public List<Comment> Comments { get; set; }
     }
 }

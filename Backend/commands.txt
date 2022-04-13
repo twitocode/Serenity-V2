@@ -1,0 +1,2 @@
+migrate - dotnet ef migrations add "InitialMigration" update --context "DataContext" --project "Infrastructure" --startup-project "Web"
+update - dotnet ef database update --context "DataContext" --project "Infrastructure" --startup-project "Web"
