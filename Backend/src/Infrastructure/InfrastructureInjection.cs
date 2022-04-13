@@ -46,6 +46,7 @@ public static class InfrastructureInjection
 
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IPostsService, PostsService>();
 
         services.AddAuthentication(options =>
         {
