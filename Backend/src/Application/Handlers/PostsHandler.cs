@@ -1,5 +1,6 @@
 using System.Security.Claims;
-using Application.Dtos;
+using Application.Dtos.Auth;
+using Application.Dtos.Posts;
 using Application.Interfaces;
 using Domain.Entities;
 
@@ -14,8 +15,8 @@ public class PostsHandler
         this.postService = postService;
     }
 
-    public async Task<List<Post>> GetPostsAsync(User user)
+    public async Task<CreatePostResponse> CreatePostAsync(User user)
     {
-        return await postService.GetPostsAsync(user);
+        return await postService.CreatePostAsync(user);
     }
 }

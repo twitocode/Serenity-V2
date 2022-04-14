@@ -1,4 +1,4 @@
-using Application.Dtos;
+using Application.Dtos.Auth;
 using Application.Handlers;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;

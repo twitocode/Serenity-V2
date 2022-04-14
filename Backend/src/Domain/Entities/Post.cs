@@ -13,6 +13,7 @@ namespace Domain.Entities
 
         [Required]
         public string Content { get; set; }
+        public List<string> Tags { get; set; }
 
         [Required]
         public string UserId { get; set; }
@@ -21,5 +22,6 @@ namespace Domain.Entities
         public User User { get; set; }
 
         public List<Comment> Comments { get; set; }
+
     }
 }

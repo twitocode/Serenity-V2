@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Application.Dtos;
+using Application.Dtos.Auth;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;

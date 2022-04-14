@@ -1,4 +1,5 @@
 using Application.Handlers;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,9 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
-    public async void GetUserPosts()
+    public async Task<ActionResult<ICollection<Post>>> GetUserPosts()
     {
         var user = await authHandler.GetUserAsync(HttpContext.User);
-        
+        return Ok(user.Posts);
     }
 }

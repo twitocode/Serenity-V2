@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Dtos;
+namespace Application.Dtos.Auth;
 
 public class RegisterUserDto
 {
