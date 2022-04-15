@@ -75,11 +75,6 @@ public class AuthService : IAuthService
         }
 
         User user = mapper.Map<User>(dto);
-
-        user.Posts = new List<Post>();
-        user.FollowedTags = new List<string>();
-        user.Friends = new List<User>();
-
         IdentityResult result = await userManager.CreateAsync(user, dto.Password);
 
         if (result.Succeeded)

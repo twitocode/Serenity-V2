@@ -1,10 +1,12 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -24,8 +26,7 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
     .AddUserManager<UserManager<User>>()
     .AddSignInManager<SignInManager<User>>(); ;
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;

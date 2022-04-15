@@ -18,8 +18,8 @@ public class DataContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<Post>().Property(e => e.Id).HasConversion(id => id.ToString(), id => new Guid(id));
-        builder.Entity<Comment>().Property(e => e.Id).HasConversion(id => id.ToString(), id => new Guid(id));
-        builder.Entity<Comment>().Property(e => e.PostId).HasConversion(id => id.ToString(), id => new Guid(id));
+        builder.Entity<Post>()
+            .Property(b => b.Id)
+            .HasDefaultValue(new Guid().ToString());
     }
 }

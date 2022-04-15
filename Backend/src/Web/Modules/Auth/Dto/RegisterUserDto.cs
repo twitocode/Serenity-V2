@@ -20,6 +20,8 @@ public class RegisterUserDto
     public string Avatar { get; set; }
     public string DiscordProfile { get; set; }
     public string InstagramProfile { get; set; }
+    public string Bio { get; set; }
+    public List<string> FollowedTags { get; set; }
 }
 
 public class RegisterUserResponse

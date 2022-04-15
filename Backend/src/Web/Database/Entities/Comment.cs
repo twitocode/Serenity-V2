@@ -5,18 +5,11 @@ namespace Serenity.Database.Entities;
 public class Comment
 {
     [Key]
-    public Guid Id;
+    public string Id { get; set; }
     public string Content { get; set; }
 
-    [Required]
-    public Guid PostId { get; set; }
-
-    [Required]
+    public string PostId { get; set; }
     public string UserId { get; set; }
-
-    [Required]
     public Post Post { get; set; }
-
-    [Required]
     public User User { get; set; }
 }

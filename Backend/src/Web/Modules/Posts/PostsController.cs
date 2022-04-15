@@ -23,18 +23,31 @@ public class PostsController : ControllerBase
     public async Task<ActionResult<ICollection<Post>>> GetUserPosts()
     {
         var user = await authService.GetUserAsync(HttpContext.User);
-        return Ok(user.Posts);
+        var posts = await postsService.GetUserPostsAsync(user);
+
+        return Ok(posts);
     }
 
     [HttpPost]
-    public async Task<ActionResult<CreatePostResponse>> CreatePost(CreatePostDto dto)
+    public async Task<ActionResult<CreatePostResponse>> CreatePost([FromBody] CreatePostDto dto)
     {
         var user = await authService.GetUserAsync(HttpContext.User);
         var response = await postsService.CreatePostAsync(user, dto);
 
         if (response.Success)
             return Ok(response);
+        else
+            return BadRequest(response);
+    }
 
+    [HttpDelete]
+    public async Task<ActionResult<bool>> DeletePost([FromQuery] string postId)
+    {
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var response = await postsService.DeletePostAsync(user, postId);
+
+        if (response)
+            return Ok(response);
         else
             return BadRequest(response);
     }

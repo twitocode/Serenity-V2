@@ -12,7 +12,7 @@ public class CreatePostDto
     public string Content { get; set; }
 
     [Required]
-    public string[] Tags { get; set; }
+    public List<string> Tags { get; set; }
 }
 
 public class CreatePostResponse
