@@ -20,11 +20,32 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
+    public async Task<ActionResult<ICollection<Post>>> GetRecentPosts()
+    {
+        var posts = await postsService.GetRecentPostsAsync();
+        return Ok(posts);
+    }
+
+    [HttpGet("my")]
     public async Task<ActionResult<ICollection<Post>>> GetUserPosts()
     {
         var user = await authService.GetUserAsync(HttpContext.User);
         var posts = await postsService.GetUserPostsAsync(user);
 
+        return Ok(posts);
+    }
+
+    [HttpGet("user/{id}")]
+    public async Task<ActionResult<ICollection<Post>>> GetUserPostsById([FromRoute] string id)
+    {
+        var posts = await postsService.GetUserPostsByIdAsync(id);
+        return Ok(posts);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ICollection<Post>>> GetPostById([FromRoute] string id)
+    {
+        var posts = await postsService.GetPostByIdAsync(id);
         return Ok(posts);
     }
 
@@ -40,11 +61,11 @@ public class PostsController : ControllerBase
             return BadRequest(response);
     }
 
-    [HttpDelete]
-    public async Task<ActionResult<bool>> DeletePost([FromQuery] string postId)
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> DeletePost([FromRoute] string id)
     {
         var user = await authService.GetUserAsync(HttpContext.User);
-        var response = await postsService.DeletePostAsync(user, postId);
+        var response = await postsService.DeletePostAsync(user, id);
 
         if (response)
             return Ok(response);

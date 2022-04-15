@@ -38,6 +38,24 @@ public class PostsService : IPostsService
         return Task.FromResult(posts.ToList());
     }
 
+    public Task<List<Post>> GetRecentPostsAsync()
+    {
+        var posts = context.Posts.Where(x => true).OrderByDescending(x => true);
+        return Task.FromResult(posts.ToList());
+    }
+
+    public Task<List<Post>> GetUserPostsByIdAsync(string id)
+    {
+        var posts = context.Posts.Where(x => x.UserId == id);
+        return Task.FromResult(posts.ToList());
+    }
+
+    public Task<Post> GetPostByIdAsync(string id)
+    {
+        var post = context.Posts.Where(x => x.UserId == id).FirstOrDefault();
+        return Task.FromResult(post);
+    }
+
     public Task<bool> DeletePostAsync(User user, string id)
     {
         var post = context.Posts.Where(x => x.Id == id && x.UserId == user.Id).FirstOrDefault();
