@@ -21,5 +21,9 @@ public class DataContext : IdentityDbContext<User>
         builder.Entity<Post>()
             .Property(b => b.Id)
             .HasDefaultValue(new Guid().ToString());
+
+        builder.Entity<Comment>()
+            .Property(b => b.Id)
+            .HasDefaultValue(new Guid().ToString());
     }
 }

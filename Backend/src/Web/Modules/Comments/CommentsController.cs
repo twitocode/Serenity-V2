@@ -1,13 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
+using Serenity.Common.Interfaces;
+using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Comments;
 
-[Route("posts/{id}")]
+[Route("posts/{postId}")]
 public class CommentsController : ControllerBase
 {
-    [HttpGet("{userId}")]
-    public async Task<ActionResult<string>> AddFriend([FromRoute] string userId, [FromRoute] string id)
+    private readonly IAuthService authService;
+    private readonly ICommentsService commentsService;
+
+    public CommentsController(IAuthService authService, ICommentsService commentsService)
     {
-        return $"{userId} {id}";
+        this.authService = authService;
+        this.commentsService = commentsService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<Comment>>> GetComments([FromRoute] string postId)
+    {
+        var comments = await commentsService.GetCommentsAsync(postId);
+        return Ok(comments);
     }
 }

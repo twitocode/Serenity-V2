@@ -15,4 +15,10 @@ public class CommentsService : ICommentsService
         this.context = context;
         this.mapper = mapper;
     }
+
+    public Task<List<Comment>> GetCommentsAsync(string postId)
+    {
+        var post = context.Posts.Where(post => post.Id == postId).FirstOrDefault();
+        return Task.FromResult(post.Comments);
+    }
 }
