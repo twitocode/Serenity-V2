@@ -9,7 +9,7 @@ using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
-using Serenity.Modules.Auth;
+using Serenity.Modules.Identity;
 using Serenity.Modules.Posts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,7 +41,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IPostsService, PostsService>();
 
 builder.Services.AddAuthentication(options =>

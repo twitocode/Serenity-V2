@@ -1,6 +1,6 @@
 using AutoMapper;
 using Serenity.Database.Entities;
-using Serenity.Modules.Auth.Dto;
+using Serenity.Modules.Identity.Dto;
 using Serenity.Modules.Posts.Dto;
 
 namespace Serenity.Common;

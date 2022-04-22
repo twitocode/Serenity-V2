@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
 
-namespace Serenity.Modules.Auth;
+namespace Serenity.Modules.Identity;
 
 public class JwtService : IJwtService
 {

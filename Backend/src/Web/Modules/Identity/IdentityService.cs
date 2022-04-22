@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
-using Serenity.Modules.Auth.Dto;
+using Serenity.Modules.Identity.Dto;
 
-namespace Serenity.Modules.Auth;
+namespace Serenity.Modules.Identity;
 
-public class AuthService : IAuthService
+public class IdentityService : IIdentityService
 {
     private readonly DataContext context;
     private readonly IJwtService jwtService;
@@ -16,7 +16,7 @@ public class AuthService : IAuthService
     private readonly SignInManager<User> signInManager;
     private readonly IMapper mapper;
 
-    public AuthService(DataContext context, UserManager<User> userManager, IJwtService jwtService, SignInManager<User> signInManager, IMapper mapper)
+    public IdentityService(DataContext context, UserManager<User> userManager, IJwtService jwtService, SignInManager<User> signInManager, IMapper mapper)
     {
         this.jwtService = jwtService;
         this.context = context;

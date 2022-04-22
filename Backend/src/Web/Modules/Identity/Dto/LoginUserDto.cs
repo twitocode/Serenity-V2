@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace Serenity.Modules.Auth.Dto;
+namespace Serenity.Modules.Identity.Dto;
 
 public class LoginUserDto
 {

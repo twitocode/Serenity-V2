@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
-using Serenity.Modules.Auth.Dto;
+using Serenity.Modules.Identity.Dto;
 
-namespace Serenity.Modules.Auth;
+namespace Serenity.Modules.Identity;
 
 [Route("auth")]
 [AllowAnonymous]
-public class AuthController : ControllerBase
+public class IdentityController : ControllerBase
 {
-    private readonly IAuthService authService;
+    private readonly IIdentityService authService;
     private readonly IHttpContextAccessor accessor;
 
-    public AuthController(IAuthService authService, IHttpContextAccessor accessor)
+    public IdentityController(IIdentityService authService, IHttpContextAccessor accessor)
     {
         this.authService = authService;
         this.accessor = accessor;
@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterUserResponse>> RegisterUser([FromBody] RegisterUserDto dto)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto dto)
     {
         var response = await authService.RegisterUserAsync(dto);
 
@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<LoginUserResponse>> LoginUser([FromBody] LoginUserDto dto)
+    public async Task<IActionResult> LoginUser([FromBody] LoginUserDto dto)
     {
         var response = await authService.LoginAsync(dto);
 
@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
 
     [HttpGet("user")]
     [Authorize]
-    public async Task<ActionResult<User>> GetUser()
+    public async Task<IActionResult> GetUser()
     {
         var user = await authService.GetUserAsync(HttpContext?.User);
         return Ok(user);
