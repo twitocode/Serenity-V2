@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
@@ -5,6 +6,7 @@ using Serenity.Database.Entities;
 namespace Serenity.Modules.Comments;
 
 [Route("posts/{postId}")]
+[Authorize]
 public class CommentsController : ControllerBase
 {
     private readonly IIdentityService authService;
@@ -36,14 +38,14 @@ public class CommentsController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromRoute] string postId)
+    public async Task<IActionResult> Delete([FromRoute] string postId, [FromRoute] string commentId)
     {
         //needs to delete comments and replies
         return Ok();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Edit([FromRoute] string postId)
+    public async Task<IActionResult> Edit([FromRoute] string postId, [FromRoute] string commentId)
     {
         return Ok();
     }

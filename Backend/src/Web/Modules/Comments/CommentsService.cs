@@ -21,4 +21,22 @@ public class CommentsService : ICommentsService
         var post = context.Posts.Where(post => post.Id == postId).FirstOrDefault();
         return Task.FromResult(post.Comments);
     }
+
+    public Task<bool> Delete(User user, string postId, string commentId)
+    {
+        var comment = context.Comments.Where(x => x.Id == postId && x.UserId == user.Id && x.PostId == postId).FirstOrDefault();
+
+        if (comment is null) return Task.FromResult(false);
+
+        foreach (var s in comment.ToString()) { }
+
+        var result = context.SaveChanges();
+
+        if (result >= 0)
+        {
+            return Task.FromResult(true);
+        }
+
+        return Task.FromResult(false);
+    }
 }
