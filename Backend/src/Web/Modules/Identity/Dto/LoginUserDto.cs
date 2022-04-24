@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
+using Serenity.Common.Errors;
 
 namespace Serenity.Modules.Identity.Dto;
 
@@ -13,9 +15,14 @@ public class LoginUserDto
     public string Password { get; set; }
 }
 
-public class LoginUserResponse
+public class LoginUserResponse : Response
 {
     public string Token { get; set; }
-    public bool Success { get; set; }
-    public List<IdentityError> Errors { get; set; }
+
+    public LoginUserResponse(bool success, List<ApplicationError> errors, string token) : base(success, errors)
+    {
+        Token = token;
+    }
+
+    public LoginUserResponse() {}
 }

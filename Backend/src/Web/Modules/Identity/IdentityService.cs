@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common.Errors;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -33,8 +34,9 @@ public class IdentityService : IIdentityService
         {
             return new LoginUserResponse
             {
-                Errors = new List<IdentityError> {
-                    new IdentityError { Code = "UserNotFound", Description = $"The user with the email of [{dto.Email}] Does not exist" }
+                Errors = new List<ApplicationError>
+                {
+                    new ApplicationError("UserNotFound", $"The user with the email of [{dto.Email}] Does not exist")
                 },
                 Success = false,
                 Token = null
@@ -47,8 +49,9 @@ public class IdentityService : IIdentityService
         {
             return new LoginUserResponse
             {
-                Errors = new List<IdentityError> {
-                    new IdentityError { Code = "PasswordInvalid", Description = "The password provided is not the same as the hashed password" },
+                Errors = new List<ApplicationError>
+                {
+                    new ApplicationError("PasswordInvalid", "The password provided is not the same as the hashed password")
                 },
                 Success = false,
                 Token = null
@@ -69,7 +72,10 @@ public class IdentityService : IIdentityService
         {
             return new RegisterUserResponse
             {
-                Errors = new List<IdentityError>() { new IdentityError { Code = "User Exists", Description = "User already exists in the database" } },
+                Errors = new List<ApplicationError>()
+                {
+                    new ApplicationError("User Exists", "User already exists in the database")
+                },
                 Success = false
             };
         }
@@ -86,9 +92,16 @@ public class IdentityService : IIdentityService
             };
         }
 
+        List<ApplicationError> errors = new();
+
+        foreach (var error in result.Errors.ToList())
+        {
+            errors.Add(new ApplicationError(error.Code, error.Description));
+        }
+
         return new RegisterUserResponse
         {
-            Errors = result.Errors.ToList(),
+            Errors = errors,
             Success = false,
         };
     }

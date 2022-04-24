@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
+using Serenity.Common.Errors;
 
 namespace Serenity.Modules.Identity.Dto;
 
@@ -24,8 +26,12 @@ public class RegisterUserDto
     public List<string> FollowedTags { get; set; }
 }
 
-public class RegisterUserResponse
+public class RegisterUserResponse : Response
 {
-    public bool Success { get; set; }
-    public List<IdentityError> Errors { get; set; }
+    public RegisterUserResponse(bool success, List<ApplicationError> errors, string token) : base(success, errors)
+    {
+
+    }
+
+    public RegisterUserResponse() { }
 }

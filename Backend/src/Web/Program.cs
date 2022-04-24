@@ -9,6 +9,7 @@ using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
+using Serenity.Modules.Comments;
 using Serenity.Modules.Identity;
 using Serenity.Modules.Posts;
 
@@ -20,55 +21,18 @@ builder.Services.AddDbContext<DataContext>(x =>
     x.UseNpgsql(connectionString);
 });
 
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<DataContext>()
-    .AddUserManager<UserManager<User>>()
-    .AddSignInManager<SignInManager<User>>(); ;
-
-builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.SignIn.RequireConfirmedEmail = false;
-    options.User.RequireUniqueEmail = true;
-
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 6;
-
-    options.SignIn.RequireConfirmedAccount = false;
-});
-
-builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddScoped<IPostsService, PostsService>();
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    string secret = builder.Configuration.GetValue<string>("JwtAccessSecret");
-    SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret));
-
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        IssuerSigningKey = key
-    };
-});
+builder.Services.AddCommentsModule(builder.Configuration);
+builder.Services.AddIdentityModule(builder.Configuration);
+builder.Services.AddPostsModule(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

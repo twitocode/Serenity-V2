@@ -25,11 +25,7 @@ public class PostsService : IPostsService
         await context.Posts.AddAsync(post);
         await context.SaveChangesAsync();
 
-        return new CreatePostResponse
-        {
-            Errors = null,
-            Success = true,
-        };
+        return new CreatePostResponse();
     }
 
     public Task<List<Post>> GetUserPostsAsync(User user)

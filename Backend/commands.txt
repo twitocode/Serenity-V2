@@ -1,2 +1,2 @@
-migrate - dotnet ef migrations add "InitialMigration" --project "Web"
-update - dotnet ef database update --project "Web"
+migrate - dotnet ef migrations add "InitialMigration" --project "src/Web"
+update - dotnet ef database update --project "src/Web"
