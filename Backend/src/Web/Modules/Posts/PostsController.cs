@@ -59,6 +59,15 @@ public class PostsController : ControllerBase
         return ResultHandler.Handle(response);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditPost([FromBody] EditPostDto dto, [FromRoute] string id)
+    {
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var response = await postsService.EditPostAsync(user, id, dto);
+
+        return ResultHandler.Handle(response);
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost([FromRoute] string id)
     {

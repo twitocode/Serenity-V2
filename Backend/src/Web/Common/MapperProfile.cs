@@ -24,5 +24,6 @@ public class MapperProfile : Profile
 
         CreateMap<CreateCommentDto, Comment>();
         CreateMap<Comment, Comment>();
+        CreateMap<Post, Post>();
     }
 }

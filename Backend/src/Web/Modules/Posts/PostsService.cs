@@ -57,7 +57,14 @@ public class PostsService : IPostsService
         var post = context.Posts.Where(x => x.Id == id && x.UserId == user.Id).FirstOrDefault();
         if (post is null) return Task.FromResult(false);
 
+        foreach (Comment comment in post.Comments)
+        {
+            context.Comments.Remove(comment);
+        }
+
+        user.Posts.Remove(post);
         context.Posts.Remove(post);
+
         var result = context.SaveChanges();
 
         if (result >= 0)
@@ -66,5 +73,28 @@ public class PostsService : IPostsService
         }
 
         return Task.FromResult(false);
+    }
+
+    public Task<EditPostResponse> EditPostAsync(User user, string id, EditPostDto dto)
+    {
+        var post = context.Posts.Where(x => x.Id == id && x.UserId == user.Id).FirstOrDefault();
+
+        if (post is null)
+        {
+            return Task.FromResult(new EditPostResponse(false, new() { new("PostNotFound", $"the post with the Id of {id} does not exist") }));
+        }
+
+        var updatedPost = mapper.Map<Post>(post);
+        updatedPost.Content = dto.Content;
+
+        context.Entry(post).CurrentValues.SetValues(updatedPost);
+        var result = context.SaveChanges();
+
+        if (result >= 0)
+        {
+            return Task.FromResult(new EditPostResponse(true, null));
+        }
+
+        return Task.FromResult(new EditPostResponse(false, new() { new("EditPostError", $"Could not edit the post of Id {id}") }));
     }
 }

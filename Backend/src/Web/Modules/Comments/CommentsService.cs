@@ -94,7 +94,7 @@ public class CommentsService : ICommentsService
         return Task.FromResult(new CreateCommentResponse(false, new() { new("ReplyCommentError", $"Could not reply to the comment of Id {dto.RepliesToId}") }));
     }
 
-    public Task<EditCommentResponse> UpdateCommentAsync(string postId, User user, EditCommentDto dto)
+    public Task<EditCommentResponse> EditCommentAsync(string postId, User user, EditCommentDto dto)
     {
         var comment = context.Comments.Where(x => x.Id == dto.CommentId && x.PostId == postId).First();
 

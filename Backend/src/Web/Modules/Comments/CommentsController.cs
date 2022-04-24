@@ -57,7 +57,7 @@ public class CommentsController : ControllerBase
     public async Task<IActionResult> Edit([FromRoute] string postId, [FromBody] EditCommentDto dto)
     {
         var user = await authService.GetUserAsync(HttpContext.User);
-        var result = await commentsService.UpdateCommentAsync(postId, user, dto);
+        var result = await commentsService.EditCommentAsync(postId, user, dto);
 
         return ResultHandler.Handle(result);
     }
