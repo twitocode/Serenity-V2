@@ -1,5 +1,6 @@
 using AutoMapper;
 using Serenity.Database.Entities;
+using Serenity.Modules.Comments.Dto;
 using Serenity.Modules.Identity.Dto;
 using Serenity.Modules.Posts.Dto;
 
@@ -20,5 +21,7 @@ public class MapperProfile : Profile
             .ForMember(x => x.Title, x => x.DoNotAllowNull())
             .ForMember(x => x.Content, x => x.DoNotAllowNull())
             .ForMember(x => x.Tags, x => x.NullSubstitute(new List<string>()));
+
+        CreateMap<CreateCommentDto, Comment>();
     }
 }

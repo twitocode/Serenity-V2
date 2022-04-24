@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
 using Serenity.Modules.Posts.Dto;
@@ -55,10 +56,7 @@ public class PostsController : ControllerBase
         var user = await authService.GetUserAsync(HttpContext.User);
         var response = await postsService.CreatePostAsync(user, dto);
 
-        if (response.Success)
-            return Ok(response);
-        else
-            return BadRequest(response);
+        return ResultHandler.Handle(response);
     }
 
     [HttpDelete("{id}")]
@@ -67,9 +65,6 @@ public class PostsController : ControllerBase
         var user = await authService.GetUserAsync(HttpContext.User);
         var response = await postsService.DeletePostAsync(user, id);
 
-        if (response)
-            return Ok(response);
-        else
-            return BadRequest(response);
+        return ResultHandler.Handle(response);
     }
 }

@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
 using Serenity.Modules.Identity.Dto;
@@ -30,26 +31,14 @@ public class IdentityController : ControllerBase
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto dto)
     {
         var response = await authService.RegisterUserAsync(dto);
-
-        if (response.Success)
-        {
-            return Ok(response);
-        }
-
-        return BadRequest(response);
+        return ResultHandler.Handle(response);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto dto)
     {
         var response = await authService.LoginAsync(dto);
-
-        if (response.Success)
-        {
-            return Ok(response);
-        }
-
-        return BadRequest(response);
+        return ResultHandler.Handle(response);
     }
 
     [HttpGet("user")]

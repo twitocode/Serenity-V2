@@ -2,6 +2,7 @@ using AutoMapper;
 using Serenity.Common.Interfaces;
 using Serenity.Database;
 using Serenity.Database.Entities;
+using Serenity.Modules.Comments.Dto;
 
 namespace Serenity.Modules.Comments;
 
@@ -38,5 +39,33 @@ public class CommentsService : ICommentsService
         }
 
         return Task.FromResult(false);
+    }
+
+    public Task<CreateCommentResponse> CreateCommentAsync(string postId, User user, CreateCommentDto dto)
+    {
+        var post = context.Posts.Where(x => x.Id == postId).First();
+
+        if (post is null)
+        {
+            return Task.FromResult(new CreateCommentResponse(false, new() { new("PostNotFound", $"the post with the Id of {postId} does not exist") }));
+        }
+
+        var comment = new Comment
+        {
+            RepliesToId = dto.RepliesToId,
+            Content = dto.Content,
+            UserId = user.Id,
+            PostId = post.Id
+        };
+
+        post.Comments.Add(comment);
+        var result = context.SaveChanges();
+
+        if (result >= 0)
+        {
+            return Task.FromResult(new CreateCommentResponse(true, null));
+        }
+
+        return Task.FromResult(new CreateCommentResponse(false, new() { new("CreatePostError", "Could not create the Post") }));
     }
 }

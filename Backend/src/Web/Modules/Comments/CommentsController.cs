@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
+using Serenity.Modules.Comments.Dto;
 
 namespace Serenity.Modules.Comments;
 
@@ -26,9 +28,12 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromRoute] string postId)
+    public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
     {
-        return Ok();
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var result = await commentsService.CreateCommentAsync(postId, user, dto);
+        
+        return ResultHandler.Handle(result);
     }
 
     [HttpPost("{commentId}")]
