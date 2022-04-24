@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
 using Serenity.Common.Interfaces;
-using Serenity.Database.Entities;
 using Serenity.Modules.Comments.Dto;
 
 namespace Serenity.Modules.Comments;
@@ -32,26 +31,34 @@ public class CommentsController : ControllerBase
     {
         var user = await authService.GetUserAsync(HttpContext.User);
         var result = await commentsService.CreateCommentAsync(postId, user, dto);
-        
+
         return ResultHandler.Handle(result);
     }
 
     [HttpPost("{commentId}")]
-    public async Task<IActionResult> Reply([FromRoute] string postId, [FromRoute] string commentId)
+    public async Task<IActionResult> Reply([FromRoute] string postId, [FromBody] CreateCommentDto dto)
     {
-        return Ok();
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var result = await commentsService.ReplyToCommentAsync(postId, user, dto);
+
+        return ResultHandler.Handle(result);
     }
 
-    [HttpDelete]
+    [HttpDelete("{commentId}")]
     public async Task<IActionResult> Delete([FromRoute] string postId, [FromRoute] string commentId)
     {
-        //needs to delete comments and replies
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var result = await commentsService.DeleteAsync(postId, user, commentId);
+
         return Ok();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Edit([FromRoute] string postId, [FromRoute] string commentId)
+    public async Task<IActionResult> Edit([FromRoute] string postId, [FromBody] EditCommentDto dto)
     {
-        return Ok();
+        var user = await authService.GetUserAsync(HttpContext.User);
+        var result = await commentsService.UpdateCommentAsync(postId, user, dto);
+
+        return ResultHandler.Handle(result);
     }
 }

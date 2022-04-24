@@ -23,5 +23,6 @@ public class MapperProfile : Profile
             .ForMember(x => x.Tags, x => x.NullSubstitute(new List<string>()));
 
         CreateMap<CreateCommentDto, Comment>();
+        CreateMap<Comment, Comment>();
     }
 }
