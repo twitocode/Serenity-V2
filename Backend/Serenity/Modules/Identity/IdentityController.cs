@@ -1,10 +1,10 @@
 
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
-using Serenity.Common.Interfaces;
-using Serenity.Database.Entities;
 using Serenity.Modules.Identity.Dto;
+using Serenity.Modules.Identity.Handlers;
 
 namespace Serenity.Modules.Identity;
 
@@ -12,40 +12,25 @@ namespace Serenity.Modules.Identity;
 [AllowAnonymous]
 public class IdentityController : ControllerBase
 {
-    private readonly IIdentityService authService;
-    private readonly IHttpContextAccessor accessor;
+    private readonly IMediator mediator;
 
-    public IdentityController(IIdentityService authService, IHttpContextAccessor accessor)
+    public IdentityController(IMediator mediator)
     {
-        this.authService = authService;
-        this.accessor = accessor;
-    }
-
-    [HttpGet]
-    public string HelloWorld()
-    {
-        return "Hello world";
+        this.mediator = mediator;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto dto)
-    {
-        var response = await authService.RegisterUserAsync(dto);
-        return ResultHandler.Handle(response);
-    }
+        => ResultHandler.Handle(await mediator.Send(new RegisterUserCommand(dto)));
+
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto dto)
-    {
-        var response = await authService.LoginAsync(dto);
-        return ResultHandler.Handle(response);
-    }
+        => ResultHandler.Handle(await mediator.Send(new LoginUserCommand(dto)));
+
 
     [HttpGet("user")]
     [Authorize]
     public async Task<IActionResult> GetUser()
-    {
-        var user = await authService.GetUserAsync(HttpContext?.User);
-        return Ok(user);
-    }
+        => Ok(await mediator.Send(new GetUserQuery(HttpContext?.User)));
 }

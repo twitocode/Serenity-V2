@@ -1,15 +1,10 @@
-using System.Text;
+using System.Reflection;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serenity.Common;
-using Serenity.Common.Interfaces;
 using Serenity.Database;
-using Serenity.Database.Entities;
 using Serenity.Modules.Comments;
 using Serenity.Modules.Identity;
 using Serenity.Modules.Posts;
@@ -26,14 +21,13 @@ builder.Services.AddCommentsModule(builder.Configuration);
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddPostsModule(builder.Configuration);
 
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
