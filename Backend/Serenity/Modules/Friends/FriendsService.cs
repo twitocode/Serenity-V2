@@ -5,7 +5,7 @@ using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Friends;
 
-public class FriendsService : IFriendsService
+public class FriendsService
 {
     private readonly DataContext context;
     private readonly IMapper mapper;

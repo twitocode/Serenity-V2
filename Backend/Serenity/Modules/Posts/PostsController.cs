@@ -13,10 +13,7 @@ public class PostsController : ControllerBase
 {
     private readonly IMediator mediator;
 
-    public PostsController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
+    public PostsController(IMediator mediator) => this.mediator = mediator;
 
     [HttpGet]
     public async Task<IActionResult> GetRecentPosts()

@@ -1,4 +1,3 @@
-
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +13,15 @@ public class IdentityController : ControllerBase
 {
     private readonly IMediator mediator;
 
-    public IdentityController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
+    public IdentityController(IMediator mediator) => this.mediator = mediator;
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDto dto)
         => ResultHandler.Handle(await mediator.Send(new RegisterUserCommand(dto)));
 
-
     [HttpPost("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto dto)
         => ResultHandler.Handle(await mediator.Send(new LoginUserCommand(dto)));
-
 
     [HttpGet("user")]
     [Authorize]

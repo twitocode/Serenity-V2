@@ -32,7 +32,6 @@ public static class IdentityModule
         });
 
         services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IIdentityService, IdentityService>();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

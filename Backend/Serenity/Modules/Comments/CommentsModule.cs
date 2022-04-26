@@ -6,7 +6,6 @@ public static class CommentsModule
 {
     public static IServiceCollection AddCommentsModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ICommentsService, CommentsService>();
         return services;
     }
 }

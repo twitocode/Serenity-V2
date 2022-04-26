@@ -12,16 +12,9 @@ namespace Serenity.Modules.Comments;
 [Authorize]
 public class CommentsController : ControllerBase
 {
-    private readonly IIdentityService authService;
-    private readonly ICommentsService commentsService;
     private readonly IMediator mediator;
 
-    public CommentsController(IMediator mediator, IIdentityService authService, ICommentsService commentsService)
-    {
-        this.mediator = mediator;
-        this.authService = authService;
-        this.commentsService = commentsService;
-    }
+    public CommentsController(IMediator mediator) => this.mediator = mediator;
 
     [HttpGet("all")]
     public async Task<IActionResult> GetComments([FromRoute] string postId)
