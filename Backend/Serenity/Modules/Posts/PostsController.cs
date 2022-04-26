@@ -1,9 +1,9 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
-using Serenity.Common.Interfaces;
-using Serenity.Database.Entities;
 using Serenity.Modules.Posts.Dto;
+using Serenity.Modules.Posts.Handlers;
 
 namespace Serenity.Modules.Posts;
 
@@ -11,69 +11,38 @@ namespace Serenity.Modules.Posts;
 [Route("posts")]
 public class PostsController : ControllerBase
 {
-    private readonly IIdentityService authService;
-    private readonly IPostsService postsService;
+    private readonly IMediator mediator;
 
-    public PostsController(IIdentityService authService, IPostsService postsService)
+    public PostsController(IMediator mediator)
     {
-        this.authService = authService;
-        this.postsService = postsService;
+        this.mediator = mediator;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetRecentPosts()
-    {
-        var posts = await postsService.GetRecentPostsAsync();
-        return Ok(posts);
-    }
+        => Ok(await mediator.Send(new GetRecentPostsQuery()));
 
     [HttpGet("my")]
     public async Task<IActionResult> GetUserPosts()
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var posts = await postsService.GetUserPostsAsync(user);
-
-        return Ok(posts);
-    }
+        => Ok(await mediator.Send(new GetUserPostsQuery(HttpContext?.User)));
 
     [HttpGet("user/{id}")]
     public async Task<IActionResult> GetUserPostsById([FromRoute] string id)
-    {
-        var posts = await postsService.GetUserPostsByIdAsync(id);
-        return Ok(posts);
-    }
+        => Ok(await mediator.Send(new GetUserPostsByIdQuery(id)));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById([FromRoute] string id)
-    {
-        var posts = await postsService.GetPostByIdAsync(id);
-        return Ok(posts);
-    }
+        => Ok(await mediator.Send(new GetPostByIdQuery(id)));
 
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var response = await postsService.CreatePostAsync(user, dto);
-
-        return ResultHandler.Handle(response);
-    }
+        => ResultHandler.Handle(await mediator.Send(new CreatePostCommand(dto, HttpContext.User)));
 
     [HttpPut("{id}")]
     public async Task<IActionResult> EditPost([FromBody] EditPostDto dto, [FromRoute] string id)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var response = await postsService.EditPostAsync(user, id, dto);
-
-        return ResultHandler.Handle(response);
-    }
+        => ResultHandler.Handle(await mediator.Send(new EditPostCommand(dto, HttpContext.User, id)));
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost([FromRoute] string id)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var response = await postsService.DeletePostAsync(user, id);
-
-        return ResultHandler.Handle(response);
-    }
+        => ResultHandler.Handle(await mediator.Send(new DeletePostCommand(id, HttpContext.User)));
 }

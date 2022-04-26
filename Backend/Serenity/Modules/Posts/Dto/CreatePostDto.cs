@@ -16,12 +16,13 @@ public class CreatePostDto
     public List<string> Tags { get; set; }
 }
 
-public class CreatePostResponse : Response {
+public class CreatePostResponse : Response
+{
 
-    public CreatePostResponse(bool success, List<ApplicationError> errors, string token) : base(success, errors)
+    public CreatePostResponse(bool success, List<ApplicationError> errors) : base(success, errors)
     {
-        
+
     }
 
     public CreatePostResponse() { }
- }
+}
