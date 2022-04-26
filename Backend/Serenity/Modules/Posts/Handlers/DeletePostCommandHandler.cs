@@ -26,9 +26,9 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, bool>
     public async Task<bool> Handle(DeletePostCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
-        var post = context.Posts.Where(x => x.Id == command.Id && x.UserId == user.Id).FirstOrDefault();
+        var post = context.Posts.Where(x => x.Id == command.Id && x.UserId == user.Id).First();
 
-        if (post is null) return false;
+        if (post is null) return true;
 
         foreach (Comment comment in post.Comments)
         {

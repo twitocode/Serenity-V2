@@ -1,8 +1,10 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Modules.Comments.Dto;
+using Serenity.Modules.Comments.Handlers;
 
 namespace Serenity.Modules.Comments;
 
@@ -12,53 +14,32 @@ public class CommentsController : ControllerBase
 {
     private readonly IIdentityService authService;
     private readonly ICommentsService commentsService;
+    private readonly IMediator mediator;
 
-    public CommentsController(IIdentityService authService, ICommentsService commentsService)
+    public CommentsController(IMediator mediator, IIdentityService authService, ICommentsService commentsService)
     {
+        this.mediator = mediator;
         this.authService = authService;
         this.commentsService = commentsService;
     }
 
     [HttpGet("all")]
     public async Task<IActionResult> GetComments([FromRoute] string postId)
-    {
-        var comments = await commentsService.GetCommentsAsync(postId);
-        return Ok(comments);
-    }
+        => Ok(await mediator.Send(new GetCommentsQuery(postId)));
 
     [HttpPost]
     public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var result = await commentsService.CreateCommentAsync(postId, user, dto);
-
-        return ResultHandler.Handle(result);
-    }
+        => ResultHandler.Handle(await mediator.Send(new CreateCommentCommand(dto, HttpContext.User, postId)));
 
     [HttpPost("{commentId}")]
     public async Task<IActionResult> Reply([FromRoute] string postId, [FromBody] CreateCommentDto dto)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var result = await commentsService.ReplyToCommentAsync(postId, user, dto);
-
-        return ResultHandler.Handle(result);
-    }
+        => ResultHandler.Handle(await mediator.Send(new ReplyToCommentCommand(dto, HttpContext.User, postId)));
 
     [HttpDelete("{commentId}")]
     public async Task<IActionResult> Delete([FromRoute] string postId, [FromRoute] string commentId)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var result = await commentsService.DeleteAsync(postId, user, commentId);
-
-        return Ok();
-    }
+        => ResultHandler.Handle(await mediator.Send(new DeleteCommentCommand(commentId, HttpContext.User, postId)));
 
     [HttpPut]
     public async Task<IActionResult> Edit([FromRoute] string postId, [FromBody] EditCommentDto dto)
-    {
-        var user = await authService.GetUserAsync(HttpContext.User);
-        var result = await commentsService.EditCommentAsync(postId, user, dto);
-
-        return ResultHandler.Handle(result);
-    }
+        => ResultHandler.Handle(await mediator.Send(new EditCommentCommand(dto, HttpContext.User, postId)));
 }
