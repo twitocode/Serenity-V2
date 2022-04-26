@@ -37,8 +37,8 @@ public class ReplyToCommentCommandHandler : IRequestHandler<ReplyToCommentComman
         {
             RepliesToId = command.Dto.RepliesToId,
             Content = command.Dto.Content,
-            UserId = user.Id,
-            PostId = post.Id
+            User = user,
+            Post = post
         };
 
         post.Comments.Add(comment);
