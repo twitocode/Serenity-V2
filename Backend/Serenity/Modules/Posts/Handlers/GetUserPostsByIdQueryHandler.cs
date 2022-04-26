@@ -22,6 +22,6 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
     public async Task<List<Post>> Handle(GetUserPostsByIdQuery query, CancellationToken token)
     {
         var posts = context.Posts.Where(x => x.UserId == query.Id);
-        return posts.ToList();
+        return await Task.FromResult(posts.ToList());
     }
 }

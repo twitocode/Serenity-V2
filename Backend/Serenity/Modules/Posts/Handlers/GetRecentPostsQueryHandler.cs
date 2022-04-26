@@ -21,6 +21,6 @@ public class GetRecentPostsQueryHandler : IRequestHandler<GetRecentPostsQuery, L
     public async Task<List<Post>> Handle(GetRecentPostsQuery query, CancellationToken token)
     {
         var posts = context.Posts.Where(x => true).OrderByDescending(x => true);
-        return posts.ToList();
+        return await Task.FromResult(posts.ToList());
     }
 }
