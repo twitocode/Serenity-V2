@@ -1,14 +1,15 @@
 using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Posts.Handlers;
 
-public record GetUserPostsByIdQuery(string Id) : IRequest<List<Post>>;
+public record GetUserPostsByIdQuery(string Id, int Page) : IRequest<PaginatedResponse<List<Post>>>;
 
-public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuery, List<Post>>
+public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuery, PaginatedResponse<List<Post>>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -19,9 +20,23 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
         this.context = context;
     }
 
-    public async Task<List<Post>> Handle(GetUserPostsByIdQuery query, CancellationToken token)
+    public async Task<PaginatedResponse<List<Post>>> Handle(GetUserPostsByIdQuery query, CancellationToken token)
     {
-        var posts = context.Posts.Where(x => x.UserId == query.Id);
-        return await Task.FromResult(posts.ToList());
+        float postsPerPage = 10f;
+        double pageCount = Math.Ceiling(context.Posts.Where(x => x.UserId == query.Id).Count() / postsPerPage);
+
+        var posts = context.Posts
+            .Where(x => x.UserId == query.Id)
+            .Skip((query.Page - 1) * (int)postsPerPage)
+            .Take((int)postsPerPage)
+            .ToList();
+
+        return await Task.FromResult(new PaginatedResponse<List<Post>>
+        {
+            CurrentPage = query.Page,
+            Data = posts,
+            Errors = null,
+            Pages = (int)pageCount
+        });
     }
 }

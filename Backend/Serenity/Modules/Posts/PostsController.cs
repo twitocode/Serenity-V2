@@ -16,16 +16,16 @@ public class PostsController : ControllerBase
     public PostsController(IMediator mediator) => this.mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetRecentPosts()
-        => Ok(await mediator.Send(new GetRecentPostsQuery()));
+    public async Task<IActionResult> GetRecentPosts([FromQuery] int page)
+        => Ok(await mediator.Send(new GetRecentPostsQuery(page)));
 
     [HttpGet("my")]
-    public async Task<IActionResult> GetUserPosts()
-        => Ok(await mediator.Send(new GetUserPostsQuery(HttpContext?.User)));
+    public async Task<IActionResult> GetUserPosts([FromQuery] int page)
+        => Ok(await mediator.Send(new GetUserPostsQuery(HttpContext?.User, page)));
 
     [HttpGet("user/{id}")]
-    public async Task<IActionResult> GetUserPostsById([FromRoute] string id)
-        => Ok(await mediator.Send(new GetUserPostsByIdQuery(id)));
+    public async Task<IActionResult> GetUserPostsById([FromRoute] string id, [FromQuery] int page)
+        => Ok(await mediator.Send(new GetUserPostsByIdQuery(id, page)));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById([FromRoute] string id)

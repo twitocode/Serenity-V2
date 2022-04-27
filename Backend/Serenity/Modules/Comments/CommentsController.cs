@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
-using Serenity.Common.Interfaces;
 using Serenity.Modules.Comments.Dto;
 using Serenity.Modules.Comments.Handlers;
 
@@ -17,8 +16,8 @@ public class CommentsController : ControllerBase
     public CommentsController(IMediator mediator) => this.mediator = mediator;
 
     [HttpGet("all")]
-    public async Task<IActionResult> GetComments([FromRoute] string postId)
-        => Ok(await mediator.Send(new GetCommentsQuery(postId)));
+    public async Task<IActionResult> GetComments([FromRoute] string postId, [FromQuery] int page)
+        => Ok(await mediator.Send(new GetCommentsQuery(postId, page)));
 
     [HttpPost]
     public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
