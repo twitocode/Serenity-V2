@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NodaTime;
 
 namespace Serenity.Database.Entities;
 
@@ -11,6 +12,7 @@ public class Comment
     public string PostId { get; set; }
     public string UserId { get; set; }
     public string RepliesToId { get; set; }
+    public Instant CreationTime { get; set; }
 
     public Post Post { get; set; }
     public User User { get; set; }

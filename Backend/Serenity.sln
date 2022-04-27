@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serenity.UnitTests", "Serenity.UnitTests\Serenity.UnitTests.csproj", "{430E4567-3646-4334-B568-7E8518DE27F6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serenity", "Serenity\Serenity.csproj", "{AE964312-1DA3-4FDA-B076-5AF6D017EBA0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serenity.IntegrationTests", "Serenity.IntegrationTests\Serenity.IntegrationTests.csproj", "{674C7939-1E21-48FF-A31E-AC28911570C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,18 +14,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{430E4567-3646-4334-B568-7E8518DE27F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{430E4567-3646-4334-B568-7E8518DE27F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{430E4567-3646-4334-B568-7E8518DE27F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{430E4567-3646-4334-B568-7E8518DE27F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE964312-1DA3-4FDA-B076-5AF6D017EBA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE964312-1DA3-4FDA-B076-5AF6D017EBA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE964312-1DA3-4FDA-B076-5AF6D017EBA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE964312-1DA3-4FDA-B076-5AF6D017EBA0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{674C7939-1E21-48FF-A31E-AC28911570C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{674C7939-1E21-48FF-A31E-AC28911570C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{674C7939-1E21-48FF-A31E-AC28911570C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{674C7939-1E21-48FF-A31E-AC28911570C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

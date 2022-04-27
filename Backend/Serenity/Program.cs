@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Modules.Comments;
@@ -14,7 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(x =>
 {
     string connectionString = builder.Configuration.GetConnectionString("Database");
-    x.UseNpgsql(connectionString);
+
+    x.UseNpgsql(connectionString, o =>
+    {
+        o.UseNodaTime();
+    });
 });
 
 builder.Services.AddCommentsModule(builder.Configuration);
