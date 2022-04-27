@@ -26,8 +26,8 @@ public class GetRecentPostsQueryHandler : IRequestHandler<GetRecentPostsQuery, P
         double pageCount = Math.Ceiling(context.Posts.Count() / postsPerPage);
 
         var posts = context.Posts
+            .OrderByDescending(p => p.CreationTime)
             .Skip((query.Page - 1) * (int)postsPerPage)
-            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
             .Take((int)postsPerPage)
             .ToList();
 
