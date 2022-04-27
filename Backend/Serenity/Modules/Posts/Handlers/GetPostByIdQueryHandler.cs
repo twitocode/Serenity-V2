@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Serenity.Database;

@@ -27,7 +27,7 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
 
         var comments = context.Comments
             .Where(x => x.PostId == command.PostId)
-            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
+            .OrderByDescending(p => p.CreationTime)
             .Skip((command.Page - 1) * (int)commentsPerPage)
             .Take((int)commentsPerPage)
             .ToList();

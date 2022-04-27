@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Serenity.Common;
@@ -27,6 +26,7 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
 
         var posts = context.Posts
             .Where(x => x.UserId == query.Id)
+            .OrderByDescending(p => p.CreationTime)
             .Skip((query.Page - 1) * (int)postsPerPage)
             .Take((int)postsPerPage)
             .ToList();

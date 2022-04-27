@@ -30,7 +30,7 @@ public class GetUserPostsQueryHandler : IRequestHandler<GetUserPostsQuery, Pagin
 
         var posts = context.Posts
             .Where(x => x.UserId == user.Id)
-            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
+            .OrderByDescending(p => p.CreationTime)
             .Skip((query.Page - 1) * (int)postsPerPage)
             .Take((int)postsPerPage)
             .ToList();
