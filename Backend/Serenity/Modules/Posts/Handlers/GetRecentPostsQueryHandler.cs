@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using NodaTime;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -26,6 +27,7 @@ public class GetRecentPostsQueryHandler : IRequestHandler<GetRecentPostsQuery, P
 
         var posts = context.Posts
             .Skip((query.Page - 1) * (int)postsPerPage)
+            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
             .Take((int)postsPerPage)
             .ToList();
 

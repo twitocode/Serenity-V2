@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using NodaTime;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -29,6 +30,7 @@ public class GetUserPostsQueryHandler : IRequestHandler<GetUserPostsQuery, Pagin
 
         var posts = context.Posts
             .Where(x => x.UserId == user.Id)
+            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
             .Skip((query.Page - 1) * (int)postsPerPage)
             .Take((int)postsPerPage)
             .ToList();

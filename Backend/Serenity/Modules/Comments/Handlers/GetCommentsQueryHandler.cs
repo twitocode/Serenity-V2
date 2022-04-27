@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using NodaTime;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -26,6 +27,7 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
 
         var comments = context.Comments
             .Where(x => x.PostId == command.PostId)
+            .OrderByDescending(p => p.CreationTime > SystemClock.Instance.GetCurrentInstant())
             .Skip((command.Page - 1) * (int)commentsPerPage)
             .Take((int)commentsPerPage)
             .ToList();
