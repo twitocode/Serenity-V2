@@ -16,6 +16,12 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, User>
     public async Task<User> Handle(GetUserQuery command, CancellationToken cancellationToken)
     {
         User user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return null;
+        }
+
         return user;
     }
 }

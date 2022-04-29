@@ -21,7 +21,7 @@ public class PostsController : ControllerBase
 
     [HttpGet("my")]
     public async Task<IActionResult> GetUserPosts([FromQuery] int page)
-        => Ok(await mediator.Send(new GetUserPostsQuery(HttpContext?.User, page)));
+        => Ok(await mediator.Send(new GetMyPostsQuery(HttpContext?.User, page)));
 
     [HttpGet("user/{id}")]
     public async Task<IActionResult> GetUserPostsById([FromRoute] string id, [FromQuery] int page)

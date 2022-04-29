@@ -26,6 +26,18 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
     public async Task<CreateCommentResponse> Handle(CreateCommentCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new CreateCommentResponse
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+            };
+        }
+
         var post = context.Posts.Where(x => x.Id == command.PostId).First();
 
         if (post is null)
@@ -38,10 +50,14 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             RepliesToId = command.Dto.RepliesToId,
             Content = command.Dto.Content,
             User = user,
+            UserId = user.Id.ToString(),
+            PostId = post.Id,
             Post = post
         };
 
+        context.Comments.Add(comment);
         post.Comments.Add(comment);
+
         var result = context.SaveChanges();
 
         if (result >= 0)

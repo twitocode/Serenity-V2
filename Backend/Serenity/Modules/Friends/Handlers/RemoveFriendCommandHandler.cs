@@ -26,6 +26,18 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
     public async Task<Response> Handle(RemoveFriendCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new Response
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+            };
+        }
+
         var foundUser = user.Friends.Where(x => x.Id == command.Id).First();
 
         if (foundUser is null)

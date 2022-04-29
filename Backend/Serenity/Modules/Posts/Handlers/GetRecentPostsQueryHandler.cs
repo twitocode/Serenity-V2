@@ -36,7 +36,8 @@ public class GetRecentPostsQueryHandler : IRequestHandler<GetRecentPostsQuery, P
             CurrentPage = query.Page,
             Data = posts,
             Errors = null,
-            Pages = (int)pageCount
+            Pages = (int)pageCount,
+            Success = true,
         });
     }
 }

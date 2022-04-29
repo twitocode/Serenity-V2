@@ -26,6 +26,18 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
     public async Task<Response> Handle(AddFriendCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new Response
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+            };
+        }
+
         var foundUser = context.Users.Where(x => x.Id == command.Id).First();
 
         if (foundUser is null)

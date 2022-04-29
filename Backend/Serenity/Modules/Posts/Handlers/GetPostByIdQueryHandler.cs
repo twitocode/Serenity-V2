@@ -20,7 +20,7 @@ public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, Post>
 
     public async Task<Post> Handle(GetPostByIdQuery query, CancellationToken token)
     {
-        var post = context.Posts.Where(x => x.UserId == query.Id).FirstOrDefault();
+        var post = context.Posts.Where(x => x.Id == query.Id).FirstOrDefault();
         return await Task.FromResult(post);
     }
 }

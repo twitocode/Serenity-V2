@@ -26,6 +26,19 @@ public class EditPostCommandHandler : IRequestHandler<EditPostCommand, EditPostR
     public async Task<EditPostResponse> Handle(EditPostCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new EditPostResponse
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+
+            };
+        }
+
         var post = context.Posts.Where(x => x.Id == command.Id && x.UserId == user.Id).First();
 
         if (post is null)

@@ -26,8 +26,8 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
 
         var posts = context.Posts
             .Where(x => x.UserId == query.Id)
-            .OrderByDescending(p => p.CreationTime)
             .Skip((query.Page - 1) * (int)postsPerPage)
+            .OrderByDescending(p => p.CreationTime)
             .Take((int)postsPerPage)
             .ToList();
 
@@ -36,7 +36,8 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
             CurrentPage = query.Page,
             Data = posts,
             Errors = null,
-            Pages = (int)pageCount
+            Pages = (int)pageCount,
+            Success = true,
         });
     }
 }

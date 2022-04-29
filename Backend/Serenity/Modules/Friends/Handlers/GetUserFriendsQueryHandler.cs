@@ -25,6 +25,8 @@ public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, L
     public async Task<List<User>> Handle(GetUserFriendsQuery command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null) return null;
         return user.Friends;
     }
 }

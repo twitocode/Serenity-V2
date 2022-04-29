@@ -1,11 +1,11 @@
 using AutoMapper;
 using MediatR;
-using NodaTime;
+using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
-
 namespace Serenity.Modules.Comments.Handlers;
+
 
 public record GetCommentsQuery(string PostId, int Page) : IRequest<PaginatedResponse<List<Comment>>>;
 
@@ -30,6 +30,9 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
             .OrderByDescending(p => p.CreationTime)
             .Skip((command.Page - 1) * (int)commentsPerPage)
             .Take((int)commentsPerPage)
+            .Include(x => x.User)
+            .Include(x => x.Replies)
+            .Include(x => x.RepliesTo)
             .ToList();
 
         return await Task.FromResult(new PaginatedResponse<List<Comment>>
@@ -37,7 +40,8 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
             CurrentPage = command.Page,
             Data = comments,
             Errors = null,
-            Pages = (int)pageCount
+            Pages = (int)pageCount,
+            Success = true,
         });
     }
 }

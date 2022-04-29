@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
-using Serenity.Database.Entities;
 using Serenity.Modules.Friends.Handlers;
 
 namespace Serenity.Modules.Friends;

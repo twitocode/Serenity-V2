@@ -26,6 +26,18 @@ public class EditCommentCommandHandler : IRequestHandler<EditCommentCommand, Edi
     public async Task<EditCommentResponse> Handle(EditCommentCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new EditCommentResponse
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+            };
+        }
+
         var comment = context.Comments.Where(x => x.Id == command.Dto.CommentId && x.UserId == user.Id && x.PostId == command.PostId).First();
 
         if (comment is null)

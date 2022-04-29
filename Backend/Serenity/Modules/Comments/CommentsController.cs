@@ -23,10 +23,6 @@ public class CommentsController : ControllerBase
     public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
         => ResultHandler.Handle(await mediator.Send(new CreateCommentCommand(dto, HttpContext.User, postId)));
 
-    [HttpPost("{commentId}")]
-    public async Task<IActionResult> Reply([FromRoute] string postId, [FromBody] CreateCommentDto dto)
-        => ResultHandler.Handle(await mediator.Send(new ReplyToCommentCommand(dto, HttpContext.User, postId)));
-
     [HttpDelete("{commentId}")]
     public async Task<IActionResult> Delete([FromRoute] string postId, [FromRoute] string commentId)
         => ResultHandler.Handle(await mediator.Send(new DeleteCommentCommand(commentId, HttpContext.User, postId)));

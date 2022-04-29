@@ -26,7 +26,22 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, Creat
     public async Task<CreatePostResponse> Handle(CreatePostCommand command, CancellationToken token)
     {
         Post post = mapper.Map<Post>(command.Dto);
-        post.User = await userManager.GetUserAsync(command.Claims);
+        User user = await userManager.GetUserAsync(command.Claims);
+
+        if (user is null)
+        {
+            return new CreatePostResponse
+            {
+                Errors = new()
+                {
+                    new("UserNotFound", "Could not find the user")
+                }
+
+            };
+        }
+
+        post.UserId = user.Id.ToString();
+        post.User = user;
 
         await context.Posts.AddAsync(post);
         var result = await context.SaveChangesAsync();
