@@ -2,14 +2,16 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Friends.Handlers;
 
-public record GetUserFriendsQuery(ClaimsPrincipal Claims) : IRequest<List<User>>;
+public record GetUserFriendsQuery(ClaimsPrincipal Claims) : IRequest<List<Friendship>>;
 
-public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, List<User>>
+public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, List<Friendship>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -22,11 +24,13 @@ public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, L
         this.context = context;
     }
 
-    public async Task<List<User>> Handle(GetUserFriendsQuery command, CancellationToken token)
+    public async Task<List<Friendship>> Handle(GetUserFriendsQuery command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
-        if (user is null) return null;
-        return user.Friends;
+        return context.Friendships
+            .Where(x => x.Users.Contains(user))
+            .Include(p => p.Users)
+            .ToList();
     }
 }

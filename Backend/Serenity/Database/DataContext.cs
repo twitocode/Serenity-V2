@@ -9,6 +9,7 @@ public class DataContext : IdentityDbContext<User>
 {
     public DbSet<Post> Posts { get; set; }
     public DbSet<Comment> Comments { get; set; }
+    public DbSet<Friendship> Friendships { get; set; }
 
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
@@ -24,6 +25,10 @@ public class DataContext : IdentityDbContext<User>
             .HasDefaultValue(new Guid().ToString());
 
         builder.Entity<Comment>()
+            .Property(b => b.Id)
+            .HasDefaultValue(new Guid().ToString());
+
+        builder.Entity<Friendship>()
             .Property(b => b.Id)
             .HasDefaultValue(new Guid().ToString());
 

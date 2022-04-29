@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -37,18 +38,33 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
                 }
             };
         }
-
-        var foundUser = context.Users.Where(x => x.Id == command.Id).First();
-
+        var foundUser = await userManager.FindByIdAsync(command.Id);
         if (foundUser is null)
         {
             return new Response(false, new() { new("UserNotFound", $"Could not find the user with Id of {command.Id}") });
         }
 
-        user.Friends.Add(foundUser);
-        foundUser.Friends.Add(user);
+        Friendship friendship = new Friendship
+        {
+            Users = new List<User> { user, foundUser }
+        };
 
-        var result = context.SaveChanges();
+        var result = await context.SaveChangesAsync();
+
+        if (context.Friendships.Count() > 0)
+        {
+            friendship = context.Friendships.Where(x => x.Users.Contains(foundUser)).First();
+        }
+        else
+        {
+            context.Friendships.Add(friendship);
+        }
+
+        user.Friendships.Add(friendship);
+        foundUser.Friendships.Add(friendship);
+
+
+        result = await context.SaveChangesAsync();
 
         if (result >= 0)
         {

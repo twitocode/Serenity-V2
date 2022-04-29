@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -38,15 +39,22 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
             };
         }
 
-        var foundUser = user.Friends.Where(x => x.Id == command.Id).First();
+        var friendship = context.Friendships
+            .Where(x => x.Users.Contains(user))
+            .Include(x => x.Users)
+            .First();
 
-        if (foundUser is null)
+        if (friendship is null)
         {
-            return new Response(false, new() { new("FriendNotFound", $"Could not find the friend with Id of {command.Id}") });
+            return new Response(false, new() { new("FriendshipNotFound", $"Could not find the friendship") });
         }
 
-        user.Friends.Remove(foundUser);
-        foundUser.Friends.Remove(user);
+        var foundUser = friendship.Users.Where(x => x.Id == command.Id).First();
+
+        user.Friendships.Remove(friendship);
+        foundUser.Friendships.Remove(friendship);
+
+        context.Friendships.Remove(friendship);
 
         var result = context.SaveChanges();
 
