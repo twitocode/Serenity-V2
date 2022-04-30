@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -20,6 +21,11 @@ builder.Services.AddDbContext<DataContext>(x =>
     {
         o.UseNodaTime();
     });
+});
+
+builder.Services.AddMvc().AddFluentValidation(x =>
+{
+    
 });
 
 builder.Services.AddCommentsModule(builder.Configuration);
