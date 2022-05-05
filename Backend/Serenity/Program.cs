@@ -23,11 +23,6 @@ builder.Services.AddDbContext<DataContext>(x =>
     });
 });
 
-builder.Services.AddMvc().AddFluentValidation(x =>
-{
-    
-});
-
 builder.Services.AddCommentsModule(builder.Configuration);
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddPostsModule(builder.Configuration);
@@ -36,7 +31,11 @@ builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(x => x.AddProfile<MapperProfile>());
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+    .AddFluentValidation(x =>
+    {
+        x.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
