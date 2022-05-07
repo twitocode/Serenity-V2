@@ -35,7 +35,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Respons
             {
                 Errors = new()
                 {
-                    new("UserNotFoundWithToken", $"Could not find the user with the email of {command.Dto.Email}")
+                    new("UserNotFoundWithEmail", $"Could not find the user with the email of {command.Dto.Email}")
                 },
                 Success = false,
                 Data = null
