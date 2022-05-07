@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
@@ -9,12 +8,8 @@ namespace Serenity.Modules.Comments;
 
 [Route("posts/{postId}")]
 [Authorize]
-public class CommentsController : ControllerBase
+public class CommentsController : ApiControllerBase
 {
-    private readonly IMediator mediator;
-
-    public CommentsController(IMediator mediator) => this.mediator = mediator;
-
     [HttpGet("all")]
     public async Task<IActionResult> GetComments([FromRoute] string postId, [FromQuery] int page)
         => Ok(await mediator.Send(new GetCommentsQuery(postId, page)));

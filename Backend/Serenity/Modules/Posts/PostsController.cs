@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
@@ -9,12 +8,8 @@ namespace Serenity.Modules.Posts;
 
 [Authorize]
 [Route("posts")]
-public class PostsController : ControllerBase
+public class PostsController : ApiControllerBase
 {
-    private readonly IMediator mediator;
-
-    public PostsController(IMediator mediator) => this.mediator = mediator;
-
     [HttpGet]
     public async Task<IActionResult> GetRecentPosts([FromQuery] int page)
         => Ok(await mediator.Send(new GetRecentPostsQuery(page)));

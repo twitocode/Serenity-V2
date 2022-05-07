@@ -10,12 +10,8 @@ namespace Serenity.Modules.Friends;
 
 [Route("friends")]
 [Authorize]
-public class FriendsController : ControllerBase
+public class FriendsController : ApiControllerBase
 {
-    private readonly IMediator mediator;
-
-    public FriendsController(IMediator mediator) => this.mediator = mediator;
-
     [HttpGet]
     public async Task<IActionResult> GetUserFriends()
         => Ok(await mediator.Send(new GetUserFriendsQuery(HttpContext.User)));
