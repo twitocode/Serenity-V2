@@ -21,6 +21,16 @@ public class GetUserPostsByIdQueryHandler : IRequestHandler<GetUserPostsByIdQuer
 
     public async Task<PaginatedResponse<List<Post>>> Handle(GetUserPostsByIdQuery query, CancellationToken token)
     {
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
         float postsPerPage = 10f;
         double pageCount = Math.Ceiling(context.Posts.Where(x => x.UserId == query.Id).Count() / postsPerPage);
 

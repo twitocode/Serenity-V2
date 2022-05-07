@@ -1,8 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
-using Serenity.Common;
-using Serenity.Common.Errors;
-
 namespace Serenity.Modules.Identity.Dto;
 
 public class RegisterUserDto
@@ -15,14 +10,4 @@ public class RegisterUserDto
     public string InstagramProfile { get; set; }
     public string Bio { get; set; }
     public List<string> FollowedTags { get; set; }
-}
-
-public class RegisterUserResponse : Response
-{
-    public RegisterUserResponse(bool success, List<ApplicationError> errors, string token) : base(success, errors)
-    {
-
-    }
-
-    public RegisterUserResponse() { }
 }

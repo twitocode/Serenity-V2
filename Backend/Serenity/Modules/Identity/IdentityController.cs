@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
@@ -22,5 +21,5 @@ public class IdentityController : ApiControllerBase
     [HttpGet("user")]
     [Authorize]
     public async Task<IActionResult> GetUser()
-        => Ok(await mediator.Send(new GetUserQuery(HttpContext?.User)));
+        => ResultHandler.Handle(await mediator.Send(new GetUserQuery(HttpContext?.User)));
 }

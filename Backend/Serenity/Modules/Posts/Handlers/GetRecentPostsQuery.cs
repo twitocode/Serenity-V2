@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NodaTime;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
@@ -22,6 +21,16 @@ public class GetRecentPostsQueryHandler : IRequestHandler<GetRecentPostsQuery, P
 
     public async Task<PaginatedResponse<List<Post>>> Handle(GetRecentPostsQuery query, CancellationToken token)
     {
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
         float postsPerPage = 10f;
         double pageCount = Math.Ceiling(context.Posts.Count() / postsPerPage);
 

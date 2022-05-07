@@ -20,5 +20,6 @@
 			"username": "postgres",
 			"password": "pg_notTWILIGHT_341"
 		}
-	]
+	],
+	"cSpell.words": ["DBSET"]
 }

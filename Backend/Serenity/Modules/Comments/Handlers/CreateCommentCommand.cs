@@ -2,15 +2,16 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
 using Serenity.Modules.Comments.Dto;
 
 namespace Serenity.Modules.Comments.Handlers;
 
-public record CreateCommentCommand(CreateCommentDto Dto, ClaimsPrincipal Claims, string PostId) : IRequest<CreateCommentResponse>;
+public record CreateCommentCommand(CreateCommentDto Dto, ClaimsPrincipal Claims, string PostId) : IRequest<Response<object>>;
 
-public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, CreateCommentResponse>
+public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -23,14 +24,16 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
         this.context = context;
     }
 
-    public async Task<CreateCommentResponse> Handle(CreateCommentCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(CreateCommentCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new CreateCommentResponse
+            return new Response<object>
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
@@ -38,11 +41,26 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             };
         }
 
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
         var post = context.Posts.Where(x => x.Id == command.PostId).First();
 
         if (post is null)
         {
-            return new CreateCommentResponse(false, new() { new("CommentNotFound", $"the post with the Id of {command.PostId} does not exist") });
+            return new()
+            {
+                Data = null,
+                Errors = new() { new("PostNotFound", $"Could not find the post with Id of {command.PostId}") },
+                Success = false
+            };
         }
 
         var comment = new Comment
@@ -62,9 +80,9 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
 
         if (result >= 0)
         {
-            return new CreateCommentResponse(true, null);
+            return new(true, null, null);
         }
 
-        return new CreateCommentResponse(false, new() { new("CreatePostError", "Could not create the Post") });
+        return new(false, new() { new("CreateCommentError", "Could not create the Comment") }, null);
     }
 }

@@ -28,10 +28,22 @@ public class GetMyPostsQueryHandler : IRequestHandler<GetMyPostsQuery, Paginated
         {
             return new PaginatedResponse<List<Post>>
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
                 }
+            };
+        }
+
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
             };
         }
 

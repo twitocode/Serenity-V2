@@ -12,19 +12,19 @@ public class PostsController : ApiControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetRecentPosts([FromQuery] int page)
-        => Ok(await mediator.Send(new GetRecentPostsQuery(page)));
+        => ResultHandler.Handle(await mediator.Send(new GetRecentPostsQuery(page)));
 
     [HttpGet("my")]
     public async Task<IActionResult> GetUserPosts([FromQuery] int page)
-        => Ok(await mediator.Send(new GetMyPostsQuery(HttpContext?.User, page)));
+        => ResultHandler.Handle(await mediator.Send(new GetMyPostsQuery(HttpContext?.User, page)));
 
     [HttpGet("user/{id}")]
     public async Task<IActionResult> GetUserPostsById([FromRoute] string id, [FromQuery] int page)
-        => Ok(await mediator.Send(new GetUserPostsByIdQuery(id, page)));
+        => ResultHandler.Handle(await mediator.Send(new GetUserPostsByIdQuery(id, page)));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById([FromRoute] string id)
-        => Ok(await mediator.Send(new GetPostByIdQuery(id)));
+        => ResultHandler.Handle(await mediator.Send(new GetPostByIdQuery(id)));
 
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto)

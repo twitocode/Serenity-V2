@@ -25,6 +25,26 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
         float commentsPerPage = 10f;
         double pageCount = Math.Ceiling(context.Comments.Where(x => x.PostId == command.PostId).Count() / commentsPerPage);
 
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
+        if (context.Comments.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoCommentsFound", "There are no comments to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
         var comments = context.Comments
             .Where(x => x.PostId == command.PostId)
             .OrderByDescending(p => p.CreationTime)

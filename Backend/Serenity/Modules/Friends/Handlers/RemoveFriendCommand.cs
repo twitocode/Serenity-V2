@@ -9,9 +9,9 @@ using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Friends.Handlers;
 
-public record RemoveFriendCommand(ClaimsPrincipal Claims, string Id) : IRequest<Response>;
+public record RemoveFriendCommand(ClaimsPrincipal Claims, string Id) : IRequest<Response<object>>;
 
-public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, Response>
+public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -24,18 +24,30 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
         this.context = context;
     }
 
-    public async Task<Response> Handle(RemoveFriendCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(RemoveFriendCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new Response
+            return new Response<object>
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
                 }
+            };
+        }
+
+        if (context.Friendships.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoFriendshipsFound", "There are no friendships to mutate or query") },
+                Data = null,
+                Success = false
             };
         }
 
@@ -46,7 +58,7 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
 
         if (friendship is null)
         {
-            return new Response(false, new() { new("FriendshipNotFound", $"Could not find the friendship") });
+            return new Response<object>(false, new() { new("FriendshipNotFound", $"Could not find the friendship") }, null);
         }
 
         var foundUser = friendship.Users.Where(x => x.Id == command.Id).First();
@@ -55,14 +67,13 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
         foundUser.Friendships.Remove(friendship);
 
         context.Friendships.Remove(friendship);
-
         var result = context.SaveChanges();
 
         if (result >= 0)
         {
-            return new(true, null);
+            return new(true, null, null);
         }
 
-        return new(false, new() { new("RemoveFriendError", "Could not add the friend") });
+        return new(false, new() { new("RemoveFriendError", $"Could not remove the friend with the Id of {command.Id}") }, null);
     }
 }

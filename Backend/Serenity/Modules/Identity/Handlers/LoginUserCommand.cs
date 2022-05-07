@@ -1,15 +1,16 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
 using Serenity.Common.Interfaces;
 using Serenity.Database.Entities;
 using Serenity.Modules.Identity.Dto;
 
 namespace Serenity.Modules.Identity.Handlers;
 
-public record LoginUserCommand(LoginUserDto Dto) : IRequest<LoginUserResponse>;
+public record LoginUserCommand(LoginUserDto Dto) : IRequest<Response<string>>;
 
-public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserResponse>
+public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Response<string>>
 {
     private readonly IJwtService jwtService;
     private readonly UserManager<User> userManager;
@@ -24,20 +25,20 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
         this.mapper = mapper;
     }
 
-    public async Task<LoginUserResponse> Handle(LoginUserCommand command, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(LoginUserCommand command, CancellationToken cancellationData)
     {
         User user = await userManager.FindByEmailAsync(command.Dto.Email);
 
         if (user is null)
         {
-            return new LoginUserResponse
+            return new()
             {
                 Errors = new()
                 {
-                    new("UserNotFound", $"The user with the email of [{command.Dto.Email}] Does not exist")
+                    new("UserNotFound", $"Could not find the user with the email of {command.Dto.Email}")
                 },
                 Success = false,
-                Token = null
+                Data = null
             };
         }
 
@@ -45,22 +46,22 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
 
         if (!result.Succeeded)
         {
-            return new LoginUserResponse
+            return new()
             {
                 Errors = new()
                 {
-                    new("PasswordInvalid", "The password provided is not the same as the hashed password")
+                    new("InvalidPassword", "The password provided is not the same as the hashed password")
                 },
                 Success = false,
-                Token = null
+                Data = null
             };
         }
 
-        return new LoginUserResponse
+        return new()
         {
             Errors = null,
             Success = true,
-            Token = jwtService.GenerateToken(user)
+            Data = jwtService.GenerateToken(user)
         };
     }
 }

@@ -1,5 +1,3 @@
-using Serenity.Common.Interfaces;
-
 namespace Serenity.Modules.Comments;
 
 public static class CommentsModule

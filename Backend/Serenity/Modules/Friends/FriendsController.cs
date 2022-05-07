@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serenity.Common;
@@ -14,7 +13,7 @@ public class FriendsController : ApiControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetUserFriends()
-        => Ok(await mediator.Send(new GetUserFriendsQuery(HttpContext.User)));
+        => ResultHandler.Handle(await mediator.Send(new GetUserFriendsQuery(HttpContext.User)));
 
     [HttpPost("{id}")]
     public async Task<IActionResult> AddFriend([FromRoute] string id)

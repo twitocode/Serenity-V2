@@ -1,5 +1,3 @@
-using Serenity.Common.Interfaces;
-
 namespace Serenity.Modules.Posts;
 
 public static class PostsModule

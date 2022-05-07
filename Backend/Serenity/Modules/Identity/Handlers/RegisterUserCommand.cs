@@ -1,15 +1,16 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
 using Serenity.Common.Errors;
 using Serenity.Database.Entities;
 using Serenity.Modules.Identity.Dto;
 
 namespace Serenity.Modules.Identity.Handlers;
 
-public record RegisterUserCommand(RegisterUserDto Dto) : IRequest<RegisterUserResponse>;
+public record RegisterUserCommand(RegisterUserDto Dto) : IRequest<Response<object>>;
 
-public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterUserResponse>
+public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Response<object>>
 {
     private readonly UserManager<User> userManager;
     private readonly IMapper mapper;
@@ -20,14 +21,15 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         this.mapper = mapper;
     }
 
-    public async Task<RegisterUserResponse> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
+    public async Task<Response<object>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
         if (await userManager.FindByEmailAsync(command.Dto.Email) is not null)
         {
-            return new RegisterUserResponse
+            return new()
             {
-                Errors = new() { new("User Exists", "User already exists in the database") },
-                Success = false
+                Errors = new() { new("UserAlreadyExists", "User already exists in the database") },
+                Success = false,
+                Data = null
             };
         }
 
@@ -36,10 +38,11 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
 
         if (result.Succeeded)
         {
-            return new RegisterUserResponse
+            return new()
             {
                 Errors = null,
                 Success = true,
+                Data = null
             };
         }
 
@@ -50,9 +53,10 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
             errors.Add(new ApplicationError(error.Code, error.Description));
         }
 
-        return new RegisterUserResponse
+        return new()
         {
             Errors = errors,
+            Data = null,
             Success = false,
         };
     }

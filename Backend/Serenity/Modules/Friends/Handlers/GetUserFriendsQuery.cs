@@ -9,9 +9,9 @@ using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Friends.Handlers;
 
-public record GetUserFriendsQuery(ClaimsPrincipal Claims) : IRequest<List<Friendship>>;
+public record GetUserFriendsQuery(ClaimsPrincipal Claims) : IRequest<Response<List<Friendship>>>;
 
-public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, List<Friendship>>
+public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, Response<List<Friendship>>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -24,13 +24,30 @@ public class GetUserFriendsQueryHandler : IRequestHandler<GetUserFriendsQuery, L
         this.context = context;
     }
 
-    public async Task<List<Friendship>> Handle(GetUserFriendsQuery command, CancellationToken token)
+    public async Task<Response<List<Friendship>>> Handle(GetUserFriendsQuery command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
-        return context.Friendships
+        if (context.Friendships.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoFriendshipsFound", "There are no friendships to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
+        var frienships = context.Friendships
             .Where(x => x.Users.Contains(user))
             .Include(p => p.Users)
             .ToList();
+
+        return new()
+        {
+            Errors = null,
+            Data = frienships,
+            Success = true
+        };
     }
 }

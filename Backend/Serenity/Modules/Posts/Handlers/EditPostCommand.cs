@@ -2,15 +2,16 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
 using Serenity.Modules.Posts.Dto;
 
 namespace Serenity.Modules.Posts.Handlers;
 
-public record EditPostCommand(EditPostDto Dto, ClaimsPrincipal Claims, string Id) : IRequest<EditPostResponse>;
+public record EditPostCommand(EditPostDto Dto, ClaimsPrincipal Claims, string Id) : IRequest<Response<object>>;
 
-public class EditPostCommandHandler : IRequestHandler<EditPostCommand, EditPostResponse>
+public class EditPostCommandHandler : IRequestHandler<EditPostCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -23,19 +24,30 @@ public class EditPostCommandHandler : IRequestHandler<EditPostCommand, EditPostR
         this.context = context;
     }
 
-    public async Task<EditPostResponse> Handle(EditPostCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(EditPostCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new EditPostResponse
+            return new()
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
                 }
+            };
+        }
 
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
             };
         }
 
@@ -43,7 +55,12 @@ public class EditPostCommandHandler : IRequestHandler<EditPostCommand, EditPostR
 
         if (post is null)
         {
-            return new EditPostResponse(false, new() { new("PostNotFound", $"the post with the Id of {command.Id} does not exist") });
+            return new()
+            {
+                Errors = new() { new("PostNotFound", $"Could not find the post with Id of {command.Id}") },
+                Data = null,
+                Success = false
+            };
         }
 
         var updatedPost = mapper.Map<Post>(post);
@@ -54,9 +71,14 @@ public class EditPostCommandHandler : IRequestHandler<EditPostCommand, EditPostR
 
         if (result >= 0)
         {
-            return new EditPostResponse(true, null);
+            return new(true, null, null);
         }
 
-        return new EditPostResponse(false, new() { new("EditPostError", $"Could not edit the post of Id {command.Id}") });
+        return new()
+        {
+            Errors = new() { new("EditPostError", $"Could not edit the Post with the Id of {command.Id}") },
+            Data = null,
+            Success = false
+        };
     }
 }

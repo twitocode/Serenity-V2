@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Identity;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
-using Serenity.Modules.Posts.Dto;
 
 namespace Serenity.Modules.Posts.Handlers;
 
-public record DeletePostCommand(string Id, ClaimsPrincipal Claims) : IRequest<Response>;
+public record DeletePostCommand(string Id, ClaimsPrincipal Claims) : IRequest<Response<object>>;
 
-public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Response>
+public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -24,19 +23,30 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Respo
         this.context = context;
     }
 
-    public async Task<Response> Handle(DeletePostCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(DeletePostCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new CreatePostResponse
+            return new()
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
                 }
+            };
+        }
 
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
             };
         }
 
@@ -47,7 +57,8 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Respo
             return new()
             {
                 Success = false,
-                Errors = new() { new("PostNotFound", $"Could not find the comment of Id {command.Id}") }
+                Data = null,
+                Errors = new() { new("PostNotFound", $"Could not find the post with Id of {command.Id}") }
             };
         }
 
@@ -57,7 +68,7 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Respo
             {
                 context.Comments.Remove(comment);
             }
-        } 
+        }
 
         user.Posts.Remove(post);
         context.Posts.Remove(post);
@@ -69,14 +80,16 @@ public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Respo
             return new()
             {
                 Success = true,
-                Errors = null
+                Errors = null,
+                Data = null
             };
         }
 
         return new()
         {
+            Data = null,
             Success = false,
-            Errors = new() { new("DeletePostErorr", $"Could not delete the comment of Id {command.Id}") }
+            Errors = new() { new("DeletePostError", $"Could not delete the post with the Id of {command.Id}") }
         };
     }
 }

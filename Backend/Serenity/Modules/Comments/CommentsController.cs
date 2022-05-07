@@ -12,7 +12,7 @@ public class CommentsController : ApiControllerBase
 {
     [HttpGet("all")]
     public async Task<IActionResult> GetComments([FromRoute] string postId, [FromQuery] int page)
-        => Ok(await mediator.Send(new GetCommentsQuery(postId, page)));
+        => ResultHandler.Handle(await mediator.Send(new GetCommentsQuery(postId, page)));
 
     [HttpPost]
     public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
@@ -22,7 +22,7 @@ public class CommentsController : ApiControllerBase
     public async Task<IActionResult> Delete([FromRoute] string postId, [FromRoute] string commentId)
         => ResultHandler.Handle(await mediator.Send(new DeleteCommentCommand(commentId, HttpContext.User, postId)));
 
-    [HttpPut]
+    [HttpPut("edit")]
     public async Task<IActionResult> Edit([FromRoute] string postId, [FromBody] EditCommentDto dto)
         => ResultHandler.Handle(await mediator.Send(new EditCommentCommand(dto, HttpContext.User, postId)));
 }

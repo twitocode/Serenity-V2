@@ -6,13 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
-using Serenity.Modules.Comments.Dto;
 
 namespace Serenity.Modules.Comments.Handlers;
 
-public record DeleteCommentCommand(string CommentId, ClaimsPrincipal Claims, string PostId) : IRequest<Response>;
+public record DeleteCommentCommand(string CommentId, ClaimsPrincipal Claims, string PostId) : IRequest<Response<object>>;
 
-public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, Response>
+public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -25,18 +24,40 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
         this.context = context;
     }
 
-    public async Task<Response> Handle(DeleteCommentCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(DeleteCommentCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new Response
+            return new()
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
                 }
+            };
+        }
+
+        if (context.Posts.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoPostsFound", "There are no posts to mutate or query") },
+                Data = null,
+                Success = false
+            };
+        }
+
+        if (context.Comments.Count() == 0)
+        {
+            return new()
+            {
+                Errors = new() { new("NoCommentsFound", "There are no comments to mutate or query") },
+                Data = null,
+                Success = false
             };
         }
 
@@ -51,7 +72,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
             return new()
             {
                 Success = false,
-                Errors = new() { new("CommentNotFound", $"Could not find the comment of Id {command.CommentId}") }
+                Errors = new() { new("CommentNotFound", $"Could not find the comment with the Id of {command.CommentId}") }
             };
         }
 
@@ -76,7 +97,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
         return new()
         {
             Success = false,
-            Errors = new() { new("DeleteCommentErorr", $"Could not delete the comment of Id {command.CommentId}") }
+            Errors = new() { new("DeleteCommentError", $"Could not delete the comment with the Id of {command.CommentId}") }
         };
     }
 }

@@ -2,16 +2,15 @@ using System.Security.Claims;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;
 
 namespace Serenity.Modules.Friends.Handlers;
 
-public record AddFriendCommand(ClaimsPrincipal Claims, string Id) : IRequest<Response>;
+public record AddFriendCommand(ClaimsPrincipal Claims, string Id) : IRequest<Response<object>>;
 
-public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Response>
+public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Response<object>>
 {
     private readonly DataContext context;
     private readonly UserManager<User> userManager;
@@ -24,14 +23,16 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
         this.context = context;
     }
 
-    public async Task<Response> Handle(AddFriendCommand command, CancellationToken token)
+    public async Task<Response<object>> Handle(AddFriendCommand command, CancellationToken token)
     {
         var user = await userManager.GetUserAsync(command.Claims);
 
         if (user is null)
         {
-            return new Response
+            return new Response<object>
             {
+                Success = false,
+                Data = null,
                 Errors = new()
                 {
                     new("UserNotFound", "Could not find the user")
@@ -41,7 +42,7 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
         var foundUser = await userManager.FindByIdAsync(command.Id);
         if (foundUser is null)
         {
-            return new Response(false, new() { new("UserNotFound", $"Could not find the user with Id of {command.Id}") });
+            return new(false, new() { new("FriendNotFound", $"Could not find the friend with Id of {command.Id}") }, null);
         }
 
         Friendship friendship = new Friendship
@@ -68,9 +69,9 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
 
         if (result >= 0)
         {
-            return new(true, null);
+            return new(true, null, null);
         }
 
-        return new(false, new() { new("AddFriendError", "Could not add the friend") });
+        return new(false, new() { new("AddFriendError", "Could not add the Friend") }, null);
     }
 }

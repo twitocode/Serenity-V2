@@ -4,7 +4,7 @@ namespace Serenity.Common;
 
 public static class ResultHandler
 {
-    public static IActionResult Handle(Response response)
+    public static IActionResult Handle<T>(Response<T> response)
     {
         if (response.Success) return new OkObjectResult(response);
         return new BadRequestObjectResult(response);
