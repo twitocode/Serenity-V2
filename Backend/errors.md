@@ -3,8 +3,8 @@
 ## Not Found Error
 
 - **UserNotFound** - Could not find the user
-- **UserNotFound** - Could not find the user with the Token Provided
-- **UserNotFound** - Could not find the user with the email of {email}
+- **UserNotFoundWithToken** - Could not find the user with the Token Provided
+- **UserNotFoundWithEmail** - Could not find the user with the email of {email}
 - **PostNotFound** - Could not find the post with Id of {id}
 - **CommentNotFound** - Could not find the comment with the Id of {id}
 - **FriendNotFound** - Could not find the friend with Id of {id}

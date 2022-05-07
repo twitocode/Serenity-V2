@@ -23,7 +23,7 @@ public class GetUserQueryHandler : IRequestHandler<GetUserQuery, Response<User>>
             return new()
             {
                 Success = false,
-                Errors = new() { new("UserNotFound", "Could not find the user with the Token Provided") },
+                Errors = new() { new("UserNotFoundWithToken", "Could not find the user with the Token Provided") },
                 Data = user
             };
         }
