@@ -49,7 +49,7 @@ public class EditCommentCommandHandler : IRequestHandler<EditCommentCommand, Res
             };
         }
 
-        if (context.Comments.Count() == 0)
+        else if (context.Comments.Count() == 0)
         {
             return new()
             {

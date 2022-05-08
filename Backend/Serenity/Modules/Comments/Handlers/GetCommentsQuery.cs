@@ -35,7 +35,7 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, Paginat
             };
         }
 
-        if (context.Comments.Count() == 0)
+        else if (context.Comments.Count() == 0)
         {
             return new()
             {
