@@ -15,7 +15,7 @@ public class CommentsController : ApiControllerBase
         => ResultHandler.Handle(await mediator.Send(new GetCommentsQuery(postId, page)));
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromRoute] string postId, [FromBody] CreateCommentDto dto)
+    public async Task<IActionResult> CreateOrReply([FromRoute] string postId, [FromBody] CreateCommentDto dto)
         => ResultHandler.Handle(await mediator.Send(new CreateCommentCommand(dto, HttpContext.User, postId)));
 
     [HttpDelete("{commentId}")]

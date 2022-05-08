@@ -51,7 +51,7 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             };
         }
 
-        var post = context.Posts.Where(x => x.Id == command.PostId).First();
+        var post = context.Posts.Where(x => x.Id == command.PostId).FirstOrDefault();
 
         if (post is null)
         {
@@ -63,9 +63,24 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             };
         }
 
+        var repliesTo = context.Comments
+            .Where(x => x.Id == command.Dto.RepliesToId && x.PostId == command.PostId)
+            .FirstOrDefault();
+
+        if (repliesTo is null)
+        {
+            return new()
+            {
+                Data = null,
+                Errors = new() { new("CommentNotFound", $"Could not find the comment with Id of {command.Dto.RepliesToId}") },
+                Success = false
+            };
+        }
+
         var comment = new Comment
         {
             RepliesToId = command.Dto.RepliesToId,
+            RepliesTo = repliesTo,
             Content = command.Dto.Content,
             User = user,
             UserId = user.Id.ToString(),
@@ -73,8 +88,8 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             Post = post
         };
 
-        context.Comments.Add(comment);
         post.Comments.Add(comment);
+        context.Comments.Add(comment);
 
         var result = context.SaveChanges();
 

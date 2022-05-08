@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serenity.Common;
 using Serenity.Database;
 using Serenity.Database.Entities;

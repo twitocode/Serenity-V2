@@ -54,7 +54,7 @@ public class AddFriendCommandHandler : IRequestHandler<AddFriendCommand, Respons
 
         if (context.Friendships.Count() > 0)
         {
-            friendship = context.Friendships.Where(x => x.Users.Contains(foundUser)).First();
+            friendship = context.Friendships.Where(x => x.Users.Contains(foundUser)).FirstOrDefault();
         }
         else
         {

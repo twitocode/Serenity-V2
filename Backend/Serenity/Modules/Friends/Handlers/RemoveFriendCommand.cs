@@ -54,14 +54,14 @@ public class RemoveFriendCommandHandler : IRequestHandler<RemoveFriendCommand, R
         var friendship = context.Friendships
             .Where(x => x.Users.Contains(user))
             .Include(x => x.Users)
-            .First();
+            .FirstOrDefault();
 
         if (friendship is null)
         {
             return new Response<object>(false, new() { new("FriendshipNotFound", $"Could not find the friendship") }, null);
         }
 
-        var foundUser = friendship.Users.Where(x => x.Id == command.Id).First();
+        var foundUser = friendship.Users.Where(x => x.Id == command.Id).FirstOrDefault();
 
         user.Friendships.Remove(friendship);
         foundUser.Friendships.Remove(friendship);

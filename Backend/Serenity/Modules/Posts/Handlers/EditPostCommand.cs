@@ -51,7 +51,7 @@ public class EditPostCommandHandler : IRequestHandler<EditPostCommand, Response<
             };
         }
 
-        var post = context.Posts.Where(x => x.Id == command.Id && x.UserId == user.Id).First();
+        var post = context.Posts.Where(x => x.Id == command.Id && x.UserId == user.Id).FirstOrDefault();
 
         if (post is null)
         {

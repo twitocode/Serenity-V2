@@ -61,7 +61,7 @@ public class EditCommentCommandHandler : IRequestHandler<EditCommentCommand, Res
 
         var comment = context.Comments
             .Where(x => x.Id == command.Dto.CommentId && x.UserId == user.Id && x.PostId == command.PostId)
-            .First();
+            .FirstOrDefault();
 
         if (comment is null)
         {

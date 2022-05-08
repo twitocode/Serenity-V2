@@ -50,7 +50,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
                 Success = false
             };
         }
-        
+
         else if (context.Comments.Count() == 0)
         {
             return new()
@@ -65,7 +65,7 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
             .Where(x => x.Id == command.CommentId && x.UserId == user.Id && x.PostId == command.PostId)
             .Include(x => x.Post)
             .Include(x => x.Replies)
-            .First();
+            .FirstOrDefault();
 
         if (comment is null)
         {
