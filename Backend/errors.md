@@ -8,6 +8,7 @@
 - **PostNotFound** - Could not find the post with Id of {id}
 - **CommentNotFound** - Could not find the comment with the Id of {id}
 - **FriendNotFound** - Could not find the friend with Id of {id}
+- **TagNotFound** - The post with the Id of {id} does not have the tag of {tag}
 
 ## No DBSet Found Error
 
@@ -39,3 +40,4 @@
 ## Resource Exists Error
 
 - **UserAlreadyExists** - User already exists in the database
+- **PostAlreadyHasTag** - The post with the Id of {id} already has the tag of {tag}
